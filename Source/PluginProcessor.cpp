@@ -28,8 +28,10 @@ audioViewer(1)
     synth.addSound(new SynthSound());
     synth.addVoice(new SynthVoice());
     
-    audioViewer.setBufferSize(512);
+    //Audio viewer settings
+    audioViewer.setBufferSize(1024);
     audioViewer.setRepaintRate(60);
+
 }
 
 TapSynthAudioProcessor::~TapSynthAudioProcessor()
@@ -111,6 +113,9 @@ void TapSynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlo
         }
     }
     
+    //Convolution (use one single spec for synthvoice and for this).
+    
+
     
 }
 
@@ -196,10 +201,11 @@ void TapSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
         }
     }
     
+    //This calls the render in the synthvoices.
     synth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
     
-
     audioViewer.pushBuffer(buffer);
+    
     
 
     

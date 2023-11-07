@@ -9,6 +9,8 @@
       <GROUP id="{F61844E5-74F9-4BF9-8605-152E05E937C5}" name="Data">
         <FILE id="AZrWfi" name="AdsrData.cpp" compile="1" resource="0" file="Source/AdsrData.cpp"/>
         <FILE id="ZpXqR0" name="AdsrData.h" compile="0" resource="0" file="Source/AdsrData.h"/>
+        <FILE id="H6kEWy" name="Convolution.cpp" compile="1" resource="0" file="Source/Convolution.cpp"/>
+        <FILE id="gsT7kT" name="Convolution.h" compile="0" resource="0" file="Source/Convolution.h"/>
         <FILE id="IvpVub" name="FilterData.cpp" compile="1" resource="0" file="Source/FilterData.cpp"/>
         <FILE id="CsRKW2" name="FilterData.h" compile="0" resource="0" file="Source/FilterData.h"/>
         <FILE id="AmTm0p" name="OscData.cpp" compile="1" resource="0" file="Source/OscData.cpp"/>
@@ -27,9 +29,10 @@
         <FILE id="SMJPMR" name="OscComponent.cpp" compile="1" resource="0"
               file="Source/OscComponent.cpp"/>
         <FILE id="zc6pG6" name="OscComponent.h" compile="0" resource="0" file="Source/OscComponent.h"/>
-        <FILE id="ELos59" name="Oscilloscope.cpp" compile="1" resource="0"
-              file="Source/Oscilloscope.cpp"/>
-        <FILE id="Hyjhnj" name="Oscilloscope.h" compile="0" resource="0" file="Source/Oscilloscope.h"/>
+        <FILE id="PaJeu2" name="WavePlotComponent.cpp" compile="1" resource="0"
+              file="Source/WavePlotComponent.cpp"/>
+        <FILE id="IwioW6" name="WavePlotComponent.h" compile="0" resource="0"
+              file="Source/WavePlotComponent.h"/>
       </GROUP>
       <FILE id="fIw76H" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>

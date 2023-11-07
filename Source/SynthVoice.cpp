@@ -55,6 +55,14 @@ void SynthVoice::prepareToPlay(double sampleRate, int samplesPerBlock, int outpu
     gain.prepare(spec);
     
     gain.setGainLinear(0.3f);
+    
+    irLoader.reset();
+    irLoader.prepare(spec);
+    
+    irLoader.loadImpulseResponse(irPath,
+                                 juce::dsp::Convolution::Stereo::yes,
+                                 juce::dsp::Convolution::Trim::yes,
+                                 0);
 
     isPrepared = true;
 }
@@ -80,7 +88,14 @@ void SynthVoice::renderNextBlock (juce::AudioBuffer< float > &outputBuffer, int 
     osc.getNextAudioBlock (audioBlock);
     adsr.applyEnvelopeToBuffer (synthBuffer, 0, synthBuffer.getNumSamples()); //audioBlock and outputBuffer are aliases, so the same thing (putting audio into one means putting stuff into the other)
     filter.process (synthBuffer);
+    
     gain.process (juce::dsp::ProcessContextReplacing<float> (audioBlock));
+    
+    if(irLoader.getCurrentIRSize() >= 0)
+    {
+        std::cout<<"processing" << std::endl;
+        irLoader.process(juce::dsp::ProcessContextReplacing<float>(audioBlock));
+    }
     
     for (int channel = 0; channel < outputBuffer.getNumChannels(); ++channel)
     {

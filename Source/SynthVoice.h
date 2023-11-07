@@ -54,7 +54,14 @@ private:
     AdsrData adsr;
     AdsrData filterAdsr;
     FilterData filter;
+    juce::dsp::Convolution irLoader;
     juce::dsp::Gain<float> gain;
+    
+//    juce::String irPath = "/Users/carmelofascella/Documents/Programming/scripts/juce-audio-scripts/kwx_synth/Dataset/ir_huge_reverb.wav";
+    
+    juce::String irPath = "/Users/carmelofascella/Documents/Programming/scripts/juce-audio-scripts/kwx_synth/Dataset/Overdriven-E112-K100-G4-SSP2-v1.0/SSP2/DYN-US-6/OD-E112-K100-DYN-US-6-P14-10.wav";
+
+    
     
     bool isPrepared {false};
     

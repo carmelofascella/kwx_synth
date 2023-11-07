@@ -12,6 +12,7 @@
 #include "SynthVoice.h"
 #include "SynthSound.h"
 #include "FilterData.h"
+#include "WavePlotComponent.h"
 
 //==============================================================================
 /**
@@ -60,6 +61,10 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
     
     juce::AudioProcessorValueTreeState apvts;
+    
+    juce::AudioBuffer<float> currBuffer;
+    
+    juce::AudioVisualiserComponent audioViewer;
     
 
 private:

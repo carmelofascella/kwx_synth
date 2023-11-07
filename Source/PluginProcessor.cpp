@@ -19,12 +19,17 @@ TapSynthAudioProcessor::TapSynthAudioProcessor()
                       #endif
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
-                       ), apvts (*this, nullptr, "Parameters", createParams())
+                       ),
+apvts (*this, nullptr, "Parameters", createParams()),
+audioViewer(1)
 
 #endif
 {
     synth.addSound(new SynthSound());
     synth.addVoice(new SynthVoice());
+    
+    audioViewer.setBufferSize(512);
+    audioViewer.setRepaintRate(60);
 }
 
 TapSynthAudioProcessor::~TapSynthAudioProcessor()
@@ -194,6 +199,9 @@ void TapSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
     synth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
     
 
+    audioViewer.pushBuffer(buffer);
+    
+
     
 }
 
@@ -239,7 +247,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout TapSynthAudioProcessor::crea
     params.push_back(std::make_unique<juce::AudioParameterChoice>("OSC1WAVETYPE", "Osc 1 Wave Type", juce::StringArray {"Sin", "Saw", "Square"}, 0)) ;
     
     // FM Freq (frequency of the modulation wave)
-    params.push_back (std::make_unique<juce::AudioParameterFloat> ("OSC1FMFREQ", "Osc1 FM Frequency", juce::NormalisableRange<float> { 0.0f, 1000.0f, 0.01f, 0.3f }, 0.0f));
+    params.push_back (std::make_unique<juce::AudioParameterFloat> ("OSC1FMFREQ", "Osc1 FM Frequency", juce::NormalisableRange<float> { 0.0f, 1000.0f, 0.01f, 0.2f }, 0.0f));
     // FM Depth (how big we want this wave to be)
     params.push_back (std::make_unique<juce::AudioParameterFloat> ("OSC1FMDEPTH", "Osc1 FM Depth", juce::NormalisableRange<float> { 0.0f, 1000.0f, 0.01f, 0.3f}, 0.0f));
     

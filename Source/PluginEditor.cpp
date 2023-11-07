@@ -11,24 +11,28 @@
 
 //==============================================================================
 TapSynthAudioProcessorEditor::TapSynthAudioProcessorEditor (TapSynthAudioProcessor& p)
-: AudioProcessorEditor (&p)
-, audioProcessor (p)
-, osc(audioProcessor.apvts, "OSC1WAVETYPE", "OSC1FMFREQ", "OSC1FMDEPTH")
-, adsr("Amp Envelope", audioProcessor.apvts, "ATTACK", "DECAY", "SUSTAIN", "RELEASE")
-, filter(audioProcessor.apvts, "FILTERTYPE", "FILTERCUTOFF", "FILTERRES")
-, modAdsr("Mod Enveloper", audioProcessor.apvts, "MODATTACK", "MODDECAY", "MODSUSTAIN", "MODRELEASE")
+: AudioProcessorEditor (&p),
+audioProcessor (p),
+osc(audioProcessor.apvts, "OSC1WAVETYPE", "OSC1FMFREQ", "OSC1FMDEPTH"),
+adsr("Amp Envelope", audioProcessor.apvts, "ATTACK", "DECAY", "SUSTAIN", "RELEASE"),
+filter(audioProcessor.apvts, "FILTERTYPE", "FILTERCUTOFF", "FILTERRES"),
+modAdsr("Mod Enveloper", audioProcessor.apvts, "MODATTACK", "MODDECAY", "MODSUSTAIN", "MODRELEASE")
 {
     
-    setSize (620, 500);
+    setSize (620, 700);
     addAndMakeVisible(adsr);
     addAndMakeVisible(osc);
     addAndMakeVisible(filter);
     addAndMakeVisible(modAdsr);
-
+    addAndMakeVisible(oscilloscope);
+    addAndMakeVisible(audioProcessor.audioViewer);
+    
+    audioProcessor.audioViewer.setColours(juce::Colours::black, juce::Colours::white.withAlpha(0.8f));
 }
 
 TapSynthAudioProcessorEditor::~TapSynthAudioProcessorEditor()
 {
+ 
 }
 
 //==============================================================================
@@ -53,12 +57,19 @@ void TapSynthAudioProcessorEditor::resized()
     const auto paddingY2 = 235;
     const auto width = 300;
     const auto height = 200;
+    const auto paddingY3 = 435;
+
     
     osc.setBounds (paddingX, paddingY, width, height);
     adsr.setBounds (osc.getRight(), paddingY, width, height);
     filter.setBounds(paddingX, paddingY2, width, height);
     modAdsr.setBounds(filter.getRight(), paddingY2, width, height);
+    
+    oscilloscope.setBounds(paddingX, paddingY3, modAdsr.getRight(), height);
 
+    audioProcessor.audioViewer.setBounds(oscilloscope.getBoundsInParent().withSizeKeepingCentre(oscilloscope.getWidth()*0.9f, oscilloscope.getHeight()*0.6f));
+    
 }
+
 
 

@@ -13,11 +13,14 @@
 #include "AdsrComponent.h"
 #include "OscComponent.h"
 #include "FilterComponent.h"
+#include "WavePlotComponent.h"
 
 //==============================================================================
 /**
 */
 class TapSynthAudioProcessorEditor  : public juce::AudioProcessorEditor
+//private juce::Timer
+
 {
 public:
     TapSynthAudioProcessorEditor (TapSynthAudioProcessor&);
@@ -38,9 +41,9 @@ private:
     AdsrComponent adsr;
     FilterComponent filter;
     AdsrComponent modAdsr;
+    WavePlotComponent oscilloscope;
     
-    
-
+    int i = 0;
     
     
 

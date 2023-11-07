@@ -27,6 +27,9 @@
         <FILE id="SMJPMR" name="OscComponent.cpp" compile="1" resource="0"
               file="Source/OscComponent.cpp"/>
         <FILE id="zc6pG6" name="OscComponent.h" compile="0" resource="0" file="Source/OscComponent.h"/>
+        <FILE id="ELos59" name="Oscilloscope.cpp" compile="1" resource="0"
+              file="Source/Oscilloscope.cpp"/>
+        <FILE id="Hyjhnj" name="Oscilloscope.h" compile="0" resource="0" file="Source/Oscilloscope.h"/>
       </GROUP>
       <FILE id="fIw76H" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>

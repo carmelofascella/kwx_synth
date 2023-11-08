@@ -10,10 +10,11 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
-#include "AdsrComponent.h"
-#include "OscComponent.h"
-#include "FilterComponent.h"
-#include "WavePlotComponent.h"
+#include "UI/AdsrComponent.h"
+#include "UI/OscComponent.h"
+#include "UI/FilterComponent.h"
+#include "UI/WavePlotComponent.h"
+#include "UI/EffectsComponent.h"
 
 //==============================================================================
 /**
@@ -42,6 +43,7 @@ private:
     FilterComponent filter;
     AdsrComponent modAdsr;
     WavePlotComponent oscilloscope;
+    EffectsComponent effectsBox;
     
     int i = 0;
     

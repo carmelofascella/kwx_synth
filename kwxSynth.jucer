@@ -7,32 +7,34 @@
   <MAINGROUP id="eAQmRX" name="kwxSynth">
     <GROUP id="{F3F18F83-C4C9-04D3-D89D-181F019716A7}" name="Source">
       <GROUP id="{F61844E5-74F9-4BF9-8605-152E05E937C5}" name="Data">
-        <FILE id="AZrWfi" name="AdsrData.cpp" compile="1" resource="0" file="Source/AdsrData.cpp"/>
-        <FILE id="ZpXqR0" name="AdsrData.h" compile="0" resource="0" file="Source/AdsrData.h"/>
-        <FILE id="H6kEWy" name="Convolution.cpp" compile="1" resource="0" file="Source/Convolution.cpp"/>
-        <FILE id="gsT7kT" name="Convolution.h" compile="0" resource="0" file="Source/Convolution.h"/>
-        <FILE id="IvpVub" name="FilterData.cpp" compile="1" resource="0" file="Source/FilterData.cpp"/>
-        <FILE id="CsRKW2" name="FilterData.h" compile="0" resource="0" file="Source/FilterData.h"/>
-        <FILE id="AmTm0p" name="OscData.cpp" compile="1" resource="0" file="Source/OscData.cpp"/>
-        <FILE id="vTrSfp" name="OscData.h" compile="0" resource="0" file="Source/OscData.h"/>
+        <FILE id="OnhdI8" name="AdsrData.cpp" compile="1" resource="0" file="Source/Data/AdsrData.cpp"/>
+        <FILE id="GEAwKc" name="AdsrData.h" compile="0" resource="0" file="Source/Data/AdsrData.h"/>
+        <FILE id="cgsBtj" name="FilterData.cpp" compile="1" resource="0" file="Source/Data/FilterData.cpp"/>
+        <FILE id="MfnzPC" name="FilterData.h" compile="0" resource="0" file="Source/Data/FilterData.h"/>
+        <FILE id="enjEzw" name="OscData.cpp" compile="1" resource="0" file="Source/Data/OscData.cpp"/>
+        <FILE id="Gaq0Tp" name="OscData.h" compile="0" resource="0" file="Source/Data/OscData.h"/>
       </GROUP>
       <GROUP id="{D4DE2635-D9FC-9CB7-0E02-391DD53C6913}" name="UI">
-        <FILE id="QniPYU" name="AdsrComponent.cpp" compile="1" resource="0"
-              file="Source/AdsrComponent.cpp"/>
-        <FILE id="qmgOwq" name="AdsrComponent.h" compile="0" resource="0" file="Source/AdsrComponent.h"/>
-        <FILE id="KVHNjD" name="FilterComponent.cpp" compile="1" resource="0"
-              file="Source/FilterComponent.cpp"/>
-        <FILE id="Trqt5r" name="FilterComponent.h" compile="0" resource="0"
-              file="Source/FilterComponent.h"/>
-        <FILE id="Y3Qn3j" name="FMComponent.cpp" compile="1" resource="0" file="Source/FMComponent.cpp"/>
-        <FILE id="bYi99v" name="FMComponent.h" compile="0" resource="0" file="Source/FMComponent.h"/>
-        <FILE id="SMJPMR" name="OscComponent.cpp" compile="1" resource="0"
-              file="Source/OscComponent.cpp"/>
-        <FILE id="zc6pG6" name="OscComponent.h" compile="0" resource="0" file="Source/OscComponent.h"/>
-        <FILE id="PaJeu2" name="WavePlotComponent.cpp" compile="1" resource="0"
-              file="Source/WavePlotComponent.cpp"/>
-        <FILE id="IwioW6" name="WavePlotComponent.h" compile="0" resource="0"
-              file="Source/WavePlotComponent.h"/>
+        <FILE id="XnDOra" name="AdsrComponent.cpp" compile="1" resource="0"
+              file="Source/UI/AdsrComponent.cpp"/>
+        <FILE id="Wgp8fg" name="AdsrComponent.h" compile="0" resource="0" file="Source/UI/AdsrComponent.h"/>
+        <FILE id="J1B9wd" name="EffectsComponent.cpp" compile="1" resource="0"
+              file="Source/UI/EffectsComponent.cpp"/>
+        <FILE id="Byfnem" name="EffectsComponent.h" compile="0" resource="0"
+              file="Source/UI/EffectsComponent.h"/>
+        <FILE id="jFPHaz" name="FilterComponent.cpp" compile="1" resource="0"
+              file="Source/UI/FilterComponent.cpp"/>
+        <FILE id="UCmDqm" name="FilterComponent.h" compile="0" resource="0"
+              file="Source/UI/FilterComponent.h"/>
+        <FILE id="PSrz5l" name="FMComponent.cpp" compile="1" resource="0" file="Source/UI/FMComponent.cpp"/>
+        <FILE id="JOpqol" name="FMComponent.h" compile="0" resource="0" file="Source/UI/FMComponent.h"/>
+        <FILE id="qWH154" name="OscComponent.cpp" compile="1" resource="0"
+              file="Source/UI/OscComponent.cpp"/>
+        <FILE id="IjmrV3" name="OscComponent.h" compile="0" resource="0" file="Source/UI/OscComponent.h"/>
+        <FILE id="H8ebVk" name="WavePlotComponent.cpp" compile="1" resource="0"
+              file="Source/UI/WavePlotComponent.cpp"/>
+        <FILE id="ndWLtp" name="WavePlotComponent.h" compile="0" resource="0"
+              file="Source/UI/WavePlotComponent.h"/>
       </GROUP>
       <FILE id="fIw76H" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>

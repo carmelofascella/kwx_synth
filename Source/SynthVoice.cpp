@@ -59,10 +59,10 @@ void SynthVoice::prepareToPlay(double sampleRate, int samplesPerBlock, int outpu
     irLoader.reset();
     irLoader.prepare(spec);
     
-    irLoader.loadImpulseResponse(irPath,
-                                 juce::dsp::Convolution::Stereo::yes,
-                                 juce::dsp::Convolution::Trim::yes,
-                                 0);
+//    irLoader.loadImpulseResponse(irPath,
+//                                 juce::dsp::Convolution::Stereo::yes,
+//                                 juce::dsp::Convolution::Trim::yes,
+//                                 0);
 
     isPrepared = true;
 }
@@ -91,9 +91,9 @@ void SynthVoice::renderNextBlock (juce::AudioBuffer< float > &outputBuffer, int 
     
     gain.process (juce::dsp::ProcessContextReplacing<float> (audioBlock));
     
-    if(irLoader.getCurrentIRSize() >= 0)
+    //Convolution with IR.
+    if(irLoader.getCurrentIRSize() > 0 and isConvolutionActive)
     {
-        std::cout<<"processing" << std::endl;
         irLoader.process(juce::dsp::ProcessContextReplacing<float>(audioBlock));
     }
     
@@ -114,7 +114,7 @@ void SynthVoice::updateFilter(const int filterType, const float cutoff, const fl
 
 }
 
-//void SynthVoice::updateModAdsr(const float attack, const float decay, const float sustain, const float release)
-//{
-//    filterAdsr.updateADSR(attack, decay, sustain, release);
-//}
+void SynthVoice::setConvolutionFlag(bool convolFlag)
+{
+    isConvolutionActive = convolFlag;
+}

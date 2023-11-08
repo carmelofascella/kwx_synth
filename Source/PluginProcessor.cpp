@@ -25,12 +25,28 @@ audioViewer(1)
 
 #endif
 {
-    synth.addSound(new SynthSound());
-    synth.addVoice(new SynthVoice());
+    synthSound = new SynthSound();
+    synthVoice = new SynthVoice();
+    
+    synth.addSound(synthSound);
+    synth.addVoice(synthVoice);
     
     //Audio viewer settings
     audioViewer.setBufferSize(1024);
     audioViewer.setRepaintRate(60);
+    
+    variableTree = {
+            
+            "Variables", {},
+            {
+              { "Group", {{ "name", "IR Vars" }},
+                {
+                  { "Parameter", {{ "id", "file1" }, { "value", "/" }}},
+                    { "Parameter", {{ "id", "root" }, { "value", "/" }}}
+                }
+              }
+            }
+          };
 
 }
 
@@ -190,12 +206,16 @@ void TapSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
             auto& modSustain = *apvts.getRawParameterValue("MODSUSTAIN");
             auto& modRelease = *apvts.getRawParameterValue("MODRELEASE");
             
+            //Convolution Button
+            auto& convFlag = *apvts.getRawParameterValue("CONVFLAG");
+        
 
             voice->getOscillator().selectWaveType(oscWaveChoice);
             voice->getOscillator().setFmParams(fmDepth, fmFreq);
             voice->getAdsr().update(attack.load(), decay.load(), sustain.load(), release.load()); //load because they are atomic float and not regular float.
             voice->getFilterAdsr().update(modAttack.load(), modDecay.load(), modSustain.load(), modRelease.load());
             voice->updateFilter(filterType, cutoff, resonance);
+            voice->setConvolutionFlag(convFlag.load());
         
             
         }
@@ -225,15 +245,26 @@ juce::AudioProcessorEditor* TapSynthAudioProcessor::createEditor()
 //==============================================================================
 void TapSynthAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
 {
-    // You should use this method to store your parameters in the memory block.
-    // You could do that either as raw data, or use the XML or ValueTree classes
-    // as intermediaries to make it easy to save and load complex data.
+    apvts.state.appendChild(variableTree, nullptr);
+    juce::MemoryOutputStream stream(destData, false);
+    apvts.state.writeToStream (stream);
 }
 
 void TapSynthAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
-    // You should use this method to restore your parameters from this memory block,
-    // whose contents will have been created by the getStateInformation() call.
+    auto tree = juce::ValueTree::readFromData (data, size_t(sizeInBytes));
+    variableTree = tree.getChildWithName("Variables");
+
+    if (tree.isValid())
+    {
+        apvts.state = tree;
+
+        savedFile = juce::File(variableTree.getProperty("file1"));
+        root = juce::File(variableTree.getProperty("root"));
+
+        synthVoice->getIrLoader().loadImpulseResponse(savedFile, juce::dsp::Convolution::Stereo::yes, juce::dsp::Convolution::Trim::yes, 0);
+    }
+
 }
 
 //==============================================================================
@@ -275,6 +306,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout TapSynthAudioProcessor::crea
     params.push_back (std::make_unique<juce::AudioParameterFloat>("FILTERCUTOFF", "Filter Cutoff", juce::NormalisableRange<float> { 20.0f, 20000.0f, 0.1f, 0.6f }, 200.0f));
 
     params.push_back (std::make_unique<juce::AudioParameterFloat>("FILTERRES", "Filter Resonance", juce::NormalisableRange<float> { 1.0f, 10.0f, 0.1f}, 1.0f));
+    
+    params.push_back (std::make_unique<juce::AudioParameterBool>("CONVFLAG", "Convolution Flag", false));
     
     return { params.begin(), params.end() };
 }

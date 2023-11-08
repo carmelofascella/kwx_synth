@@ -28,13 +28,19 @@ audioViewer(1)
     synthSound = new SynthSound();
     synthVoice = new SynthVoice();
     
+    synthSound2 = new SynthSound();
+    synthVoice2 = new SynthVoice();
+    
     synth.addSound(synthSound);
+    //synth.addSound(synthSound2);
     synth.addVoice(synthVoice);
+    //synth.addVoice(synthVoice2);
     
     //Audio viewer settings
     audioViewer.setBufferSize(1024);
     audioViewer.setRepaintRate(60);
     
+    //Set variable Tree
     variableTree = {
             
             "Variables", {},
@@ -125,6 +131,7 @@ void TapSynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlo
     {
         if(auto voice = dynamic_cast<SynthVoice*>(synth.getVoice(i)))  //dynamic cast to get our custom function and not the parent.
         {
+            DBG(i);
             voice->prepareToPlay(sampleRate, samplesPerBlock, getTotalNumOutputChannels());
         }
     }
@@ -179,15 +186,22 @@ void TapSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
     //Access each voice of the synthesiser and updating them
     for(int i = 0; i<synth.getNumVoices(); ++i)
     {
+        juce::String oscId = std::to_string(i+1);
+        
         if(auto voice = dynamic_cast<SynthVoice*>(synth.getVoice(i)))
         {
-            //Osc controls
-            //ADSR
-            //LFO
+            /* Get current apvts parameters*/
+            //Oscillator
             auto& oscWaveChoice = *apvts.getRawParameterValue("OSC1WAVETYPE");
-        
             auto& fmDepth = *apvts.getRawParameterValue("OSC1FMDEPTH");
             auto& fmFreq = *apvts.getRawParameterValue("OSC1FMFREQ");
+            
+            auto& oscWaveChoice2 = *apvts.getRawParameterValue("OSC2WAVETYPE");
+            auto& fmDepth2 = *apvts.getRawParameterValue("OSC2FMDEPTH");
+            auto& fmFreq2 = *apvts.getRawParameterValue("OSC2FMFREQ");
+            
+            auto& gainOsc1 = *apvts.getRawParameterValue("OSC1GAIN");
+            auto& gainOsc2 = *apvts.getRawParameterValue("OSC2GAIN");
             
             // Amp Adsr
             auto& attack = *apvts.getRawParameterValue("ATTACK");       //getraw.. returns a pointer to, we need to deference it.
@@ -209,9 +223,22 @@ void TapSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
             //Convolution Button
             auto& convFlag = *apvts.getRawParameterValue("CONVFLAG");
         
-
-            voice->getOscillator().selectWaveType(oscWaveChoice);
-            voice->getOscillator().setFmParams(fmDepth, fmFreq);
+            /* Set oscillators parameters*/
+            auto& osc1 = voice->getOscillator1();
+            auto& osc2 = voice->getOscillator2();
+            
+            for (int i = 0; i < getTotalNumOutputChannels(); i++)
+            {
+                osc1[i].selectWaveType(oscWaveChoice);
+                osc1[i].setFmParams(fmDepth, fmFreq);
+                osc1[i].setGain(gainOsc1);
+                
+                osc2[i].selectWaveType(oscWaveChoice2);
+                osc2[i].setFmParams(fmDepth2, fmFreq2);
+                osc2[i].setGain(gainOsc2);
+                
+            }
+            
             voice->getAdsr().update(attack.load(), decay.load(), sustain.load(), release.load()); //load because they are atomic float and not regular float.
             voice->getFilterAdsr().update(modAttack.load(), modDecay.load(), modSustain.load(), modRelease.load());
             voice->updateFilter(filterType, cutoff, resonance);
@@ -221,7 +248,7 @@ void TapSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
         }
     }
     
-    //This calls the render in the synthvoices.
+    //This calls the render in the synth voices.
     synth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
     
     audioViewer.pushBuffer(buffer);
@@ -280,13 +307,24 @@ juce::AudioProcessorValueTreeState::ParameterLayout TapSynthAudioProcessor::crea
     
     /* Parameters that the users will be able to modify */
     
-//    // OSC select
-    params.push_back(std::make_unique<juce::AudioParameterChoice>("OSC1WAVETYPE", "Osc 1 Wave Type", juce::StringArray {"Sin", "Saw", "Square"}, 0)) ;
-    
+    // First Oscillator parameters
+    params.push_back(std::make_unique<juce::AudioParameterChoice>("OSC1WAVETYPE", "Osc1 Wave Type", juce::StringArray {"Sin", "Saw", "Square"}, 0)) ;
     // FM Freq (frequency of the modulation wave)
     params.push_back (std::make_unique<juce::AudioParameterFloat> ("OSC1FMFREQ", "Osc1 FM Frequency", juce::NormalisableRange<float> { 0.0f, 1000.0f, 0.01f, 0.2f }, 0.0f));
     // FM Depth (how big we want this wave to be)
     params.push_back (std::make_unique<juce::AudioParameterFloat> ("OSC1FMDEPTH", "Osc1 FM Depth", juce::NormalisableRange<float> { 0.0f, 1000.0f, 0.01f, 0.3f}, 0.0f));
+    params.push_back (std::make_unique<juce::AudioParameterFloat>("OSC1GAIN", "Oscillator 1 Gain", juce::NormalisableRange<float> { -40.0f, 0.2f, 0.1f }, 0.1f, "dB"));
+
+    
+    // Second Oscillator parameters
+    params.push_back(std::make_unique<juce::AudioParameterChoice>("OSC2WAVETYPE", "Osc2 Wave Type", juce::StringArray {"Sin", "Saw", "Square"}, 0)) ;
+    // FM Freq (frequency of the modulation wave)
+    params.push_back (std::make_unique<juce::AudioParameterFloat> ("OSC2FMFREQ", "Osc2 FM Frequency", juce::NormalisableRange<float> { 0.0f, 1000.0f, 0.01f, 0.2f }, 0.0f));
+    // FM Depth (how big we want this wave to be)
+    params.push_back (std::make_unique<juce::AudioParameterFloat> ("OSC2FMDEPTH", "Osc2 FM Depth", juce::NormalisableRange<float> { 0.0f, 1000.0f, 0.01f, 0.3f}, 0.0f));
+    params.push_back (std::make_unique<juce::AudioParameterFloat>("OSC2GAIN", "Oscillator 2 Gain", juce::NormalisableRange<float> { -40.0f, 0.2f, 0.1f }, 0.1f, "dB"));
+    
+    
     
     // ADSR
     params.push_back (std::make_unique<juce::AudioParameterFloat>("ATTACK", "Attack", juce::NormalisableRange<float> { 0.1f, 1.0f, 0.01f }, 0.1f));
@@ -302,11 +340,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout TapSynthAudioProcessor::crea
     
     //Filter
     params.push_back(std::make_unique<juce::AudioParameterChoice>("FILTERTYPE", "Filter Type", juce::StringArray {"Low-pass", "Band-pass", "High-pass"}, 0)) ;
-
     params.push_back (std::make_unique<juce::AudioParameterFloat>("FILTERCUTOFF", "Filter Cutoff", juce::NormalisableRange<float> { 20.0f, 20000.0f, 0.1f, 0.6f }, 200.0f));
-
     params.push_back (std::make_unique<juce::AudioParameterFloat>("FILTERRES", "Filter Resonance", juce::NormalisableRange<float> { 1.0f, 10.0f, 0.1f}, 1.0f));
-    
     params.push_back (std::make_unique<juce::AudioParameterBool>("CONVFLAG", "Convolution Flag", false));
     
     return { params.begin(), params.end() };

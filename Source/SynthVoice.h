@@ -17,6 +17,8 @@
 #include "Data/AdsrData.h"
 #include "Data/FilterData.h"
 
+static constexpr int numChannelsToProcess { 2 };
+
 class SynthVoice : public juce::SynthesiserVoice
 {
 public:
@@ -37,7 +39,11 @@ public:
     //void updateAdsr(const float attack, const float decay, const float sustain, const float release);
     //void updateModAdsr(const float attack, const float decay, const float sustain, const float release);
     
-    OscData& getOscillator() { return osc; }
+//    OscData& getOscillator() { return osc; }
+//    OscData& getOscillator2() { return osc2; }
+    std::array<OscData, numChannelsToProcess>& getOscillator1() { return osc1; }
+    std::array<OscData, numChannelsToProcess>& getOscillator2() { return osc2; }
+    
     AdsrData& getAdsr() { return adsr; }
     AdsrData& getFilterAdsr() { return filterAdsr; }
     FilterData& getFilter() { return filter; }
@@ -53,7 +59,12 @@ private:
     juce::AudioBuffer<float> synthBuffer;
     
     //order of dsp
-    OscData osc;
+//    OscData osc;
+//    OscData osc2;
+    
+    std::array<OscData, numChannelsToProcess> osc1;
+    std::array<OscData, numChannelsToProcess> osc2;
+    
     AdsrData adsr;
     AdsrData filterAdsr;
     FilterData filter;

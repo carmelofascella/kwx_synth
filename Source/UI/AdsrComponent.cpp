@@ -17,16 +17,6 @@ AdsrComponent::AdsrComponent(juce::String name, juce::AudioProcessorValueTreeSta
     
     componentName = name;
     
-//    attackAttachment = std::make_unique<SliderAttachment>(apvts, attackId, attackSlider);
-//    decayAttachment = std::make_unique<SliderAttachment>(apvts, decayId, decaySlider);
-//    sustainAttachment = std::make_unique<SliderAttachment>(apvts, sustainId, sustainSlider);
-//    releaseAttachment = std::make_unique<SliderAttachment>(apvts, releaseId, releaseSlider);
-//
-//    setSliderParams(attackSlider);
-//    setSliderParams(decaySlider);
-//    setSliderParams(sustainSlider);
-//    setSliderParams(releaseSlider);
-    
     setSliderWithLabel (attackSlider, attackLabel, apvts, attackId, attackAttachment);
     setSliderWithLabel (decaySlider, decayLabel, apvts, decayId, decayAttachment);
     setSliderWithLabel (sustainSlider, sustainLabel, apvts, sustainId, sustainAttachment);

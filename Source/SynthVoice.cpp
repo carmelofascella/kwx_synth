@@ -18,8 +18,12 @@ bool SynthVoice::canPlaySound (juce::SynthesiserSound *sound)
 
 void SynthVoice::startNote (int midiNoteNumber, float velocity, juce::SynthesiserSound *sound, int currentPitchWheelPosition)
 {
+    for (int i=0; i<numChannelsToProcess; i++)
+    {
+        osc1[i].setWaveFrequency(midiNoteNumber);
+        osc2[i].setWaveFrequency(midiNoteNumber);
+    }
 
-    osc.setWaveFrequency(midiNoteNumber);
     adsr.noteOn();
     filterAdsr.noteOn();
     
@@ -47,8 +51,13 @@ void SynthVoice::prepareToPlay(double sampleRate, int samplesPerBlock, int outpu
     spec.maximumBlockSize = samplesPerBlock;
     spec.sampleRate = sampleRate;
     spec.numChannels = outputChannels;
-        
-    osc.prepareToPlay(spec);
+    
+    for (int ch = 0; ch < numChannelsToProcess; ch++)
+    {
+        osc1[ch].prepareToPlay(spec);
+        osc2[ch].prepareToPlay(spec);
+    }
+
     filterAdsr.setSampleRate(sampleRate);
     filter.prepareToPlay(sampleRate, samplesPerBlock, outputChannels);
     adsr.setSampleRate(sampleRate);
@@ -74,18 +83,33 @@ void SynthVoice::prepareToPlay(double sampleRate, int samplesPerBlock, int outpu
 
 void SynthVoice::renderNextBlock (juce::AudioBuffer< float > &outputBuffer, int startSample, int numSamples)
 {
-    jassert (isPrepared); //check to run code only if prepareToPlay method has been called.
+    jassert (isPrepared);
     
     if (! isVoiceActive())
         return;
     
     synthBuffer.setSize (outputBuffer.getNumChannels(), numSamples, false, false, true);
-    filterAdsr.applyEnvelopeToBuffer (outputBuffer, 0, numSamples); //each voice has it s own mod filter.
+    filterAdsr.applyEnvelopeToBuffer (synthBuffer, 0, numSamples); //each voice has it s own mod filter.
     synthBuffer.clear();
     
+    //osc1.getNextAudioBlock (audioBlock);
+    //osc2.getNextAudioBlock(audioBlock);
+    
+    //Sum osc values 
+    for (int ch = 0; ch < synthBuffer.getNumChannels(); ++ch)
+    {
+        auto* buffer = synthBuffer.getWritePointer (ch, 0);
         
+        for (int s = 0; s < synthBuffer.getNumSamples(); ++s)
+        {
+            buffer[s] = osc1[ch].processNextSample (buffer[s]) + osc2[ch].processNextSample (buffer[s]);
+            //buffer[s] = osc1[ch].processNextSample (buffer[s]);
+        }
+    }
+    
     juce::dsp::AudioBlock<float> audioBlock { synthBuffer };
-    osc.getNextAudioBlock (audioBlock);
+    
+    
     adsr.applyEnvelopeToBuffer (synthBuffer, 0, synthBuffer.getNumSamples()); //audioBlock and outputBuffer are aliases, so the same thing (putting audio into one means putting stuff into the other)
     filter.process (synthBuffer);
     

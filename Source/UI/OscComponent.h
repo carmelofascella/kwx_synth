@@ -18,7 +18,7 @@
 class OscComponent  : public juce::Component
 {
 public:
-    OscComponent(juce::AudioProcessorValueTreeState& apvts, juce::String waveSelectorId, juce::String fmFreqId, juce::String fmDepthId);
+    OscComponent(juce::AudioProcessorValueTreeState& apvts, juce::String waveSelectorId, juce::String fmFreqId, juce::String fmDepthId, juce::String gainValueId);
     ~OscComponent() override;
 
     void paint (juce::Graphics&) override;
@@ -30,19 +30,23 @@ private:
     juce::ComboBox oscWaveSelector;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> oscWaveSelectorAttachment;
     
+    juce::Slider gainSlider;
     juce::Slider fmFreqSlider;
     juce::Slider fmDepthSlider;
     
     using SliderAttachment = juce::AudioProcessorValueTreeState::SliderAttachment;
     
+    std::unique_ptr<SliderAttachment> gainAttachment;
     std::unique_ptr<SliderAttachment> fmFreqAttachment;
     std::unique_ptr<SliderAttachment> fmDepthAttachment;
     
 
     juce::Label fmFreqLabel {"FM Freq", "FM Freq"};
     juce::Label fmDepthLabel {"FM Depth", "FM Depth"};
+    juce::Label gainLabel {"Gain", "Gain"};
     
 //    using Attachment = juce::AudioProcessorValueTreeState::SliderAttachment;
     void setSliderWithLabel(juce::Slider& slider, juce::Label& label, juce::AudioProcessorValueTreeState& apvts, juce::String paramId,std::unique_ptr<SliderAttachment>& attachment);
+    
     
  };

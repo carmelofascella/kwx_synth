@@ -38,12 +38,16 @@ private:
     // access the processor object that created it.
     TapSynthAudioProcessor& audioProcessor;
     
-    OscComponent osc;
+    OscComponent osc1;
+    OscComponent osc2;
+    
     AdsrComponent adsr;
     FilterComponent filter;
     AdsrComponent modAdsr;
     WavePlotComponent oscilloscope;
     EffectsComponent effectsBox;
+    
+    
     
     int i = 0;
     

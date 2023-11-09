@@ -68,10 +68,8 @@ public:
     juce::dsp::Convolution irLoader;
     
     SynthSound* synthSound;
-    SynthSound* synthSound2; 
     SynthVoice* synthVoice;
-    SynthVoice* synthVoice2;
-    
+
     juce::File root, savedFile;
 
 private:

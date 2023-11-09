@@ -13,9 +13,10 @@
 TapSynthAudioProcessorEditor::TapSynthAudioProcessorEditor (TapSynthAudioProcessor& p)
 : AudioProcessorEditor (&p),
 audioProcessor (p),
-osc1(audioProcessor.apvts, "OSC1WAVETYPE", "OSC1FMFREQ", "OSC1FMDEPTH", "OSC1GAIN", "OSC1BTN"),
-osc2(audioProcessor.apvts, "OSC2WAVETYPE", "OSC2FMFREQ", "OSC2FMDEPTH", "OSC2GAIN", "OSC2BTN"),
-adsr("Amp Envelope", audioProcessor.apvts, "ATTACK", "DECAY", "SUSTAIN", "RELEASE"),
+osc1("Oscillator 1", audioProcessor.apvts, "OSC1WAVETYPE", "OSC1FMFREQ", "OSC1FMDEPTH", "OSC1GAIN", "OSC1BTN"),
+osc2("Oscillator 2",audioProcessor.apvts, "OSC2WAVETYPE", "OSC2FMFREQ", "OSC2FMDEPTH", "OSC2GAIN", "OSC2BTN"),
+adsr("Amp Envelope 1", audioProcessor.apvts, "ATTACK", "DECAY", "SUSTAIN", "RELEASE"),
+adsr2("Amp Envelope 2", audioProcessor.apvts, "ATTACK2", "DECAY2", "SUSTAIN2", "RELEASE2"),
 filter(audioProcessor.apvts, "FILTERTYPE", "FILTERCUTOFF", "FILTERRES"),
 modAdsr("Mod Enveloper", audioProcessor.apvts, "MODATTACK", "MODDECAY", "MODSUSTAIN", "MODRELEASE"),
 effectsBox(audioProcessor.apvts, audioProcessor.variableTree, *audioProcessor.synthVoice, audioProcessor.savedFile, audioProcessor.root)
@@ -24,6 +25,7 @@ effectsBox(audioProcessor.apvts, audioProcessor.variableTree, *audioProcessor.sy
     
     setSize (815, 920);
     addAndMakeVisible(adsr);
+    addAndMakeVisible(adsr2);
     addAndMakeVisible(osc1);
     addAndMakeVisible(osc2);
     addAndMakeVisible(filter);
@@ -72,6 +74,7 @@ void TapSynthAudioProcessorEditor::resized()
     osc1.setBounds (paddingX, paddingY, width, height);
     osc2.setBounds(osc1.getX(), paddingY2, width, osc1.getHeight());
     adsr.setBounds (osc1.getRight(), paddingY, width, height);
+    adsr2.setBounds (osc2.getRight(), osc2.getY(), width, height);
     filter.setBounds(paddingX, paddingY3, width, height);
     modAdsr.setBounds(filter.getRight(), paddingY3, width, height);
     
@@ -80,8 +83,8 @@ void TapSynthAudioProcessorEditor::resized()
     
     oscilloscope.setBounds(paddingX, paddingY5, modAdsr.getRight(), height);
 
-    audioProcessor.audioViewer.setBounds(oscilloscope.getBoundsInParent().withSizeKeepingCentre(oscilloscope.getWidth()*0.9f, oscilloscope.getHeight()*0.6f));
-    
+    audioProcessor.audioViewer.setBounds(oscilloscope.getBoundsInParent().withSizeKeepingCentre(oscilloscope.getWidth()*0.9f, oscilloscope.getHeight()*0.65f));
+
 }
 
 

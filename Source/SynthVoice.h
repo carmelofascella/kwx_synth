@@ -44,7 +44,9 @@ public:
     std::array<OscData, numChannelsToProcess>& getOscillator1() { return osc1; }
     std::array<OscData, numChannelsToProcess>& getOscillator2() { return osc2; }
     
-    AdsrData& getAdsr() { return adsr; }
+    AdsrData& getAdsr1() { return adsr1; }
+    AdsrData& getAdsr2() { return adsr2; }
+    
     AdsrData& getFilterAdsr() { return filterAdsr; }
     FilterData& getFilter() { return filter; }
     juce::dsp::Convolution& getIrLoader() {return irLoader;}
@@ -52,7 +54,7 @@ public:
     void updateFilter(const int filterType, const float cutoff, const float resonance);
     
     void setConvolutionFlag(bool convolFlag);
-    void setOscillatorActivity(bool isActiveBtnOsc1, bool isActiveBtnOsc2);
+    void setOscillatorActiveState(bool isActiveBtnOsc1, bool isActiveBtnOsc2);
     
     
     
@@ -66,7 +68,9 @@ private:
     std::array<OscData, numChannelsToProcess> osc1;
     std::array<OscData, numChannelsToProcess> osc2;
     
-    AdsrData adsr;
+    AdsrData adsr1;
+    AdsrData adsr2;
+    
     AdsrData filterAdsr;
     FilterData filter;
     juce::dsp::Convolution irLoader;
@@ -75,8 +79,12 @@ private:
     bool isConvolutionActive = false;
     
     bool isPrepared {false};
-    bool isActiveBtnOsc1{true};
-    bool isActiveBtnOsc2{true};
+//    bool isActiveBtnOsc1{true};
+//    bool isActiveBtnOsc2{true};
+    
+    int isActiveBtnOsc1{1};
+    int isActiveBtnOsc2{1};
+    int numActiveOsc {2};
     
 
 };

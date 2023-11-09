@@ -12,9 +12,10 @@
 #include "OscComponent.h"
 
 //==============================================================================
-OscComponent::OscComponent(juce::AudioProcessorValueTreeState& apvts, juce::String waveSelectorId, juce::String fmFreqId, juce::String fmDepthId, juce::String gainValueId, juce::String isOscActiveBtnId)
+OscComponent::OscComponent(juce::String name,juce::AudioProcessorValueTreeState& apvts, juce::String waveSelectorId, juce::String fmFreqId, juce::String fmDepthId, juce::String gainValueId, juce::String isOscActiveBtnId)
 {
- 
+    componentName = name;
+    
     juce::StringArray choices {"Sine",  "Saw", "Square"};
     oscWaveSelector.addItemList(choices, 1);
     addAndMakeVisible(oscWaveSelector);
@@ -43,7 +44,7 @@ void OscComponent::paint (juce::Graphics& g)
     g.fillAll (juce::Colours::black);
     g.setColour (juce::Colours::white);
     g.setFont (20.0f);
-    g.drawText ("Oscillator", labelSpace.withX (5), juce::Justification::left);
+    g.drawText (componentName, labelSpace.withX (5), juce::Justification::left);
     g.drawRoundedRectangle (bounds.toFloat(), 5.0f, 2.0f);
 
 

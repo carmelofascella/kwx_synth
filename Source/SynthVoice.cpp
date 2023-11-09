@@ -24,15 +24,21 @@ void SynthVoice::startNote (int midiNoteNumber, float velocity, juce::Synthesise
         osc2[i].setWaveFrequency(midiNoteNumber);
     }
 
-    adsr.noteOn();
     filterAdsr.noteOn();
+    
+    adsr1.noteOn();
+    adsr2.noteOn();
+    
+    
     
 }
 
 void SynthVoice::stopNote (float velocity, bool allowTailOff)
 {
-    adsr.noteOff();
     filterAdsr.noteOff();
+    adsr1.noteOff();
+    adsr2.noteOff();
+    
 }
 
 void SynthVoice::pitchWheelMoved (int newPitchWheelValue)
@@ -60,26 +66,17 @@ void SynthVoice::prepareToPlay(double sampleRate, int samplesPerBlock, int outpu
 
     filterAdsr.setSampleRate(sampleRate);
     filter.prepareToPlay(sampleRate, samplesPerBlock, outputChannels);
-    adsr.setSampleRate(sampleRate);
+    adsr1.setSampleRate(sampleRate);
+    adsr2.setSampleRate(sampleRate);
     gain.prepare(spec);
     
     gain.setGainLinear(0.3f);
     
     irLoader.reset();
     irLoader.prepare(spec);
-    
-//    irLoader.loadImpulseResponse(irPath,
-//                                 juce::dsp::Convolution::Stereo::yes,
-//                                 juce::dsp::Convolution::Trim::yes,
-//                                 0);
 
     isPrepared = true;
 }
-
-//void SynthVoice::updateAdsr(const float attack, const float decay, const float sustain, const float release)
-//{
-//    adsr.updateADSR(attack, decay, sustain, release);
-//}
 
 void SynthVoice::renderNextBlock (juce::AudioBuffer< float > &outputBuffer, int startSample, int numSamples)
 {
@@ -90,7 +87,7 @@ void SynthVoice::renderNextBlock (juce::AudioBuffer< float > &outputBuffer, int 
     
     synthBuffer.setSize (outputBuffer.getNumChannels(), numSamples, false, false, true);
 
-    filterAdsr.applyEnvelopeToBuffer (synthBuffer, 0, numSamples); //each voice has it s own mod filter. It processes each samples with the chosen envelope.
+    //filterAdsr.applyEnvelopeToBuffer (synthBuffer, 0, numSamples); //each voice has it s own mod filter. It processes each samples with the chosen envelope.
     synthBuffer.clear();
     
     //osc1.getNextAudioBlock (audioBlock);
@@ -103,18 +100,31 @@ void SynthVoice::renderNextBlock (juce::AudioBuffer< float > &outputBuffer, int 
         
         for (int s = 0; s < synthBuffer.getNumSamples(); ++s)
         {
-            if(isActiveBtnOsc1 and isActiveBtnOsc2)  {buffer[s] = (osc1[ch].processNextSample (buffer[s]) + osc2[ch].processNextSample (buffer[s]))/2;}
-            else if ((isActiveBtnOsc1 and !isActiveBtnOsc2) ) {buffer[s] = osc1[ch].processNextSample (buffer[s]);}
-            else if ((!isActiveBtnOsc1 and isActiveBtnOsc2) ) {buffer[s] = osc2[ch].processNextSample (buffer[s]);}
+            auto env1 = adsr1.getNextSample();
+            auto env2 = adsr2.getNextSample();
+            
+            
+//            if(isActiveBtnOsc1 and isActiveBtnOsc2)  {buffer[s] = ((osc1[ch].processNextSample (buffer[s])) * env1 + (osc2[ch].processNextSample (buffer[s])) * env2  )/2;}
+//            else if ((isActiveBtnOsc1 and !isActiveBtnOsc2) ) {buffer[s] = (osc1[ch].processNextSample (buffer[s])) * env1 ;}
+//            else if ((!isActiveBtnOsc1 and isActiveBtnOsc2) ) {buffer[s] = (osc2[ch].processNextSample (buffer[s])) * env2;}
+//
             //buffer[s] = osc1[ch].processNextSample (buffer[s]);
+            auto buffer1 = ( (osc1[ch].processNextSample (buffer[s]) ) * env1 ) * this->isActiveBtnOsc1;
+            auto buffer2 = ( (osc2[ch].processNextSample (buffer[s]) ) * env2 ) * this->isActiveBtnOsc2;
+            buffer[s] = (buffer1 + buffer2) / numActiveOsc;
         }
     }
     
     juce::dsp::AudioBlock<float> audioBlock { synthBuffer }; //Creates an AudioBlock that points to the data in an AudioBuffer.
     
     
-    adsr.applyEnvelopeToBuffer (synthBuffer, 0, synthBuffer.getNumSamples()); //audioBlock and outputBuffer are aliases, so the same thing (putting audio into one means putting stuff into the other)
+    /**ADSR **/
+    //adsr.applyEnvelopeToBuffer (synthBuffer, 0, synthBuffer.getNumSamples()); //audioBlock and outputBuffer are aliases, so the same thing (putting audio into one means putting stuff into the other)
+    
+    /**FILTER**/
+    
     filter.process (synthBuffer);
+    filterAdsr.applyEnvelopeToBuffer (synthBuffer, 0, numSamples); //each voice has it s own mod filter. It processes each samples with the chosen envelope.
     
     gain.process (juce::dsp::ProcessContextReplacing<float> (audioBlock));
     
@@ -128,7 +138,7 @@ void SynthVoice::renderNextBlock (juce::AudioBuffer< float > &outputBuffer, int 
     {
         outputBuffer.addFrom (channel, startSample, synthBuffer, channel, 0, numSamples);
         
-        if (! adsr.isActive())
+        if (! adsr1.isActive())
             clearCurrentNote();
     }
 
@@ -146,8 +156,9 @@ void SynthVoice::setConvolutionFlag(bool convolFlag)
     isConvolutionActive = convolFlag;
 }
 
-void SynthVoice::setOscillatorActivity(bool isActiveBtnOsc1, bool isActiveBtnOsc2)
+void SynthVoice::setOscillatorActiveState(bool isActiveBtnOsc1, bool isActiveBtnOsc2)
 {
-    this->isActiveBtnOsc1=isActiveBtnOsc1;
-    this->isActiveBtnOsc2=isActiveBtnOsc2;
+    this->isActiveBtnOsc1=(int)isActiveBtnOsc1;
+    this->isActiveBtnOsc2=(int)isActiveBtnOsc2;
+    numActiveOsc = this->isActiveBtnOsc1 + this->isActiveBtnOsc2;
 }

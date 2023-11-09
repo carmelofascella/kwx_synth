@@ -28,17 +28,13 @@ audioViewer(1)
     synthSound = new SynthSound();
     synthVoice = new SynthVoice();
     
-    synthSound2 = new SynthSound();
-    synthVoice2 = new SynthVoice();
-    
     synth.addSound(synthSound);
-    //synth.addSound(synthSound2);
     synth.addVoice(synthVoice);
-    //synth.addVoice(synthVoice2);
     
     //Audio viewer settings
     audioViewer.setBufferSize(1024);
-    audioViewer.setRepaintRate(60);
+    audioViewer.setRepaintRate(30);
+    audioViewer.setNumChannels(2);
     
     //Set variable Tree
     variableTree = {
@@ -213,6 +209,11 @@ void TapSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
             auto& sustain = *apvts.getRawParameterValue("SUSTAIN");
             auto& release = *apvts.getRawParameterValue("RELEASE");
             
+            auto& attack2 = *apvts.getRawParameterValue("ATTACK2");       //getraw.. returns a pointer to, we need to deference it.
+            auto& decay2 = *apvts.getRawParameterValue("DECAY2");
+            auto& sustain2 = *apvts.getRawParameterValue("SUSTAIN2");
+            auto& release2 = *apvts.getRawParameterValue("RELEASE2");
+            
             // Filter
             auto& filterType = *apvts.getRawParameterValue("FILTERTYPE");
             auto& cutoff = *apvts.getRawParameterValue("FILTERCUTOFF");
@@ -242,9 +243,11 @@ void TapSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
                 osc2[i].setGain(gainOsc2);
                 
             }
-            voice->setOscillatorActivity(isActiveBtnOsc1.load(), isActiveBtnOsc2.load());
+            voice->setOscillatorActiveState(isActiveBtnOsc1.load(), isActiveBtnOsc2.load());
             
-            voice->getAdsr().update(attack.load(), decay.load(), sustain.load(), release.load()); //load because they are atomic float and not regular float.
+            voice->getAdsr1().update(attack.load(), decay.load(), sustain.load(), release.load());
+            voice->getAdsr2().update(attack2.load(), decay2.load(), sustain2.load(), release2.load()); //load because they are atomic float and not
+            
             voice->getFilterAdsr().update(modAttack.load(), modDecay.load(), modSustain.load(), modRelease.load());
             voice->updateFilter(filterType, cutoff, resonance);
             voice->setConvolutionFlag(convFlag.load());
@@ -333,17 +336,23 @@ juce::AudioProcessorValueTreeState::ParameterLayout TapSynthAudioProcessor::crea
     
     
     
-    // ADSR
-    params.push_back (std::make_unique<juce::AudioParameterFloat>("ATTACK", "Attack", juce::NormalisableRange<float> { 0.1f, 1.0f, 0.01f }, 0.1f));
-    params.push_back (std::make_unique<juce::AudioParameterFloat>("DECAY", "Decay", juce::NormalisableRange<float> { 0.1f, 1.0f, 0.01f }, 0.1f));
-    params.push_back (std::make_unique<juce::AudioParameterFloat>("SUSTAIN", "Sustain", juce::NormalisableRange<float> { 0.1f, 1.0f, 0.01f }, 1.0f));
-    params.push_back (std::make_unique<juce::AudioParameterFloat>("RELEASE", "Release", juce::NormalisableRange<float> { 0.1f, 3.0f, 0.01f }, 0.4f));
+    // ADSR Osc1
+    params.push_back (std::make_unique<juce::AudioParameterFloat>("ATTACK", "Attack", juce::NormalisableRange<float> { 0.1f, 5.0f, 0.01f }, 0.1f));
+    params.push_back (std::make_unique<juce::AudioParameterFloat>("DECAY", "Decay", juce::NormalisableRange<float> { 0.1f, 3.0f, 0.01f }, 0.1f));
+    params.push_back (std::make_unique<juce::AudioParameterFloat>("SUSTAIN", "Sustain", juce::NormalisableRange<float> { 0.1f, 3.0f, 0.01f }, 1.0f));
+    params.push_back (std::make_unique<juce::AudioParameterFloat>("RELEASE", "Release", juce::NormalisableRange<float> { 0.1f, 5.0f, 0.01f }, 0.4f));
+    
+    // ADSR Osc2
+    params.push_back (std::make_unique<juce::AudioParameterFloat>("ATTACK2", "Attack Osc2", juce::NormalisableRange<float> { 0.1f, 5.0f, 0.01f }, 0.1f));
+    params.push_back (std::make_unique<juce::AudioParameterFloat>("DECAY2", "Decay Osc2", juce::NormalisableRange<float> { 0.1f, 3.0f, 0.01f }, 0.1f));
+    params.push_back (std::make_unique<juce::AudioParameterFloat>("SUSTAIN2", "Sustain Osc2", juce::NormalisableRange<float> { 0.1f, 3.0f, 0.01f }, 1.0f));
+    params.push_back (std::make_unique<juce::AudioParameterFloat>("RELEASE2", "Release Osc2", juce::NormalisableRange<float> { 0.1f, 5.0f, 0.01f }, 0.4f));
     
     // Filter ADSR
-    params.push_back (std::make_unique<juce::AudioParameterFloat>("MODATTACK", "Mod Attack", juce::NormalisableRange<float> { 0.1f, 1.0f, 0.01f }, 0.1f));
-    params.push_back (std::make_unique<juce::AudioParameterFloat>("MODDECAY", "Mod Decay", juce::NormalisableRange<float> { 0.1f, 1.0f, 0.01f }, 0.1f));
-    params.push_back (std::make_unique<juce::AudioParameterFloat>("MODSUSTAIN", "Mod Sustain", juce::NormalisableRange<float> { 0.1f, 1.0f, 0.01f }, 1.0f));
-    params.push_back (std::make_unique<juce::AudioParameterFloat>("MODRELEASE", "Mod Release", juce::NormalisableRange<float> { 0.1f, 3.0f, 0.01f }, 0.4f));
+    params.push_back (std::make_unique<juce::AudioParameterFloat>("MODATTACK", "Mod Attack", juce::NormalisableRange<float> { 0.1f, 5.0f, 0.01f }, 0.1f));
+    params.push_back (std::make_unique<juce::AudioParameterFloat>("MODDECAY", "Mod Decay", juce::NormalisableRange<float> { 0.1f, 3.0f, 0.01f }, 0.1f));
+    params.push_back (std::make_unique<juce::AudioParameterFloat>("MODSUSTAIN", "Mod Sustain", juce::NormalisableRange<float> { 0.1f, 3.0f, 0.01f }, 1.0f));
+    params.push_back (std::make_unique<juce::AudioParameterFloat>("MODRELEASE", "Mod Release", juce::NormalisableRange<float> { 0.1f, 5.0f, 0.01f }, 0.4f));
     
     //Filter
     params.push_back(std::make_unique<juce::AudioParameterChoice>("FILTERTYPE", "Filter Type", juce::StringArray {"Low-pass", "Band-pass", "High-pass"}, 0)) ;

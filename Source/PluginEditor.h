@@ -42,6 +42,8 @@ private:
     OscComponent osc2;
     
     AdsrComponent adsr;
+    AdsrComponent adsr2;
+    
     FilterComponent filter;
     AdsrComponent modAdsr;
     WavePlotComponent oscilloscope;

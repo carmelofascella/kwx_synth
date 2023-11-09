@@ -52,10 +52,10 @@ EffectsComponent::EffectsComponent(juce::AudioProcessorValueTreeState& apvts, ju
 
     };
     
-    convolBtn.onClick = [this]()
-    {
-        std::cout << (bool)convolBtn.getToggleState() << std::endl;
-    };
+//    convolBtn.onClick = [this]()
+//    {
+//        std::cout << (bool)convolBtn.getToggleState() << std::endl;
+//    };
 }
 
 EffectsComponent::~EffectsComponent()

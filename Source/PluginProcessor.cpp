@@ -195,13 +195,17 @@ void TapSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
             auto& oscWaveChoice = *apvts.getRawParameterValue("OSC1WAVETYPE");
             auto& fmDepth = *apvts.getRawParameterValue("OSC1FMDEPTH");
             auto& fmFreq = *apvts.getRawParameterValue("OSC1FMFREQ");
+            auto& isActiveBtnOsc1 = *apvts.getRawParameterValue("OSC1BTN");
+            
             
             auto& oscWaveChoice2 = *apvts.getRawParameterValue("OSC2WAVETYPE");
             auto& fmDepth2 = *apvts.getRawParameterValue("OSC2FMDEPTH");
             auto& fmFreq2 = *apvts.getRawParameterValue("OSC2FMFREQ");
+            auto& isActiveBtnOsc2 = *apvts.getRawParameterValue("OSC2BTN");
             
             auto& gainOsc1 = *apvts.getRawParameterValue("OSC1GAIN");
             auto& gainOsc2 = *apvts.getRawParameterValue("OSC2GAIN");
+            
             
             // Amp Adsr
             auto& attack = *apvts.getRawParameterValue("ATTACK");       //getraw.. returns a pointer to, we need to deference it.
@@ -238,6 +242,7 @@ void TapSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
                 osc2[i].setGain(gainOsc2);
                 
             }
+            voice->setOscillatorActivity(isActiveBtnOsc1.load(), isActiveBtnOsc2.load());
             
             voice->getAdsr().update(attack.load(), decay.load(), sustain.load(), release.load()); //load because they are atomic float and not regular float.
             voice->getFilterAdsr().update(modAttack.load(), modDecay.load(), modSustain.load(), modRelease.load());
@@ -314,6 +319,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout TapSynthAudioProcessor::crea
     // FM Depth (how big we want this wave to be)
     params.push_back (std::make_unique<juce::AudioParameterFloat> ("OSC1FMDEPTH", "Osc1 FM Depth", juce::NormalisableRange<float> { 0.0f, 1000.0f, 0.01f, 0.3f}, 0.0f));
     params.push_back (std::make_unique<juce::AudioParameterFloat>("OSC1GAIN", "Oscillator 1 Gain", juce::NormalisableRange<float> { -40.0f, 0.2f, 0.1f }, 0.1f, "dB"));
+    params.push_back (std::make_unique<juce::AudioParameterBool>("OSC1BTN", "Osc1 Active Button", true));
 
     
     // Second Oscillator parameters
@@ -323,6 +329,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout TapSynthAudioProcessor::crea
     // FM Depth (how big we want this wave to be)
     params.push_back (std::make_unique<juce::AudioParameterFloat> ("OSC2FMDEPTH", "Osc2 FM Depth", juce::NormalisableRange<float> { 0.0f, 1000.0f, 0.01f, 0.3f}, 0.0f));
     params.push_back (std::make_unique<juce::AudioParameterFloat>("OSC2GAIN", "Oscillator 2 Gain", juce::NormalisableRange<float> { -40.0f, 0.2f, 0.1f }, 0.1f, "dB"));
+    params.push_back (std::make_unique<juce::AudioParameterBool>("OSC2BTN", "Osc1 Active Button", true));
     
     
     

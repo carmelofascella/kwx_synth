@@ -89,7 +89,8 @@ void SynthVoice::renderNextBlock (juce::AudioBuffer< float > &outputBuffer, int 
         return;
     
     synthBuffer.setSize (outputBuffer.getNumChannels(), numSamples, false, false, true);
-    filterAdsr.applyEnvelopeToBuffer (synthBuffer, 0, numSamples); //each voice has it s own mod filter.
+
+    filterAdsr.applyEnvelopeToBuffer (synthBuffer, 0, numSamples); //each voice has it s own mod filter. It processes each samples with the chosen envelope.
     synthBuffer.clear();
     
     //osc1.getNextAudioBlock (audioBlock);
@@ -102,12 +103,14 @@ void SynthVoice::renderNextBlock (juce::AudioBuffer< float > &outputBuffer, int 
         
         for (int s = 0; s < synthBuffer.getNumSamples(); ++s)
         {
-            buffer[s] = osc1[ch].processNextSample (buffer[s]) + osc2[ch].processNextSample (buffer[s]);
+            if(isActiveBtnOsc1 and isActiveBtnOsc2)  {buffer[s] = (osc1[ch].processNextSample (buffer[s]) + osc2[ch].processNextSample (buffer[s]))/2;}
+            else if ((isActiveBtnOsc1 and !isActiveBtnOsc2) ) {buffer[s] = osc1[ch].processNextSample (buffer[s]);}
+            else if ((!isActiveBtnOsc1 and isActiveBtnOsc2) ) {buffer[s] = osc2[ch].processNextSample (buffer[s]);}
             //buffer[s] = osc1[ch].processNextSample (buffer[s]);
         }
     }
     
-    juce::dsp::AudioBlock<float> audioBlock { synthBuffer };
+    juce::dsp::AudioBlock<float> audioBlock { synthBuffer }; //Creates an AudioBlock that points to the data in an AudioBuffer.
     
     
     adsr.applyEnvelopeToBuffer (synthBuffer, 0, synthBuffer.getNumSamples()); //audioBlock and outputBuffer are aliases, so the same thing (putting audio into one means putting stuff into the other)
@@ -141,4 +144,10 @@ void SynthVoice::updateFilter(const int filterType, const float cutoff, const fl
 void SynthVoice::setConvolutionFlag(bool convolFlag)
 {
     isConvolutionActive = convolFlag;
+}
+
+void SynthVoice::setOscillatorActivity(bool isActiveBtnOsc1, bool isActiveBtnOsc2)
+{
+    this->isActiveBtnOsc1=isActiveBtnOsc1;
+    this->isActiveBtnOsc2=isActiveBtnOsc2;
 }

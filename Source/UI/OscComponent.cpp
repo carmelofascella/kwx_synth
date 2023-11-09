@@ -12,7 +12,7 @@
 #include "OscComponent.h"
 
 //==============================================================================
-OscComponent::OscComponent(juce::AudioProcessorValueTreeState& apvts, juce::String waveSelectorId, juce::String fmFreqId, juce::String fmDepthId, juce::String gainValueId)
+OscComponent::OscComponent(juce::AudioProcessorValueTreeState& apvts, juce::String waveSelectorId, juce::String fmFreqId, juce::String fmDepthId, juce::String gainValueId, juce::String isOscActiveBtnId)
 {
  
     juce::StringArray choices {"Sine",  "Saw", "Square"};
@@ -21,13 +21,14 @@ OscComponent::OscComponent(juce::AudioProcessorValueTreeState& apvts, juce::Stri
     
     oscWaveSelectorAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(apvts, waveSelectorId, oscWaveSelector);
     
-//    using SliderAttachment = juce::AudioProcessorValueTreeState::SliderAttachment;
-//    
 
     setSliderWithLabel(gainSlider, gainLabel, apvts, gainValueId, gainAttachment);
     setSliderWithLabel(fmFreqSlider, fmFreqLabel, apvts, fmFreqId, fmFreqAttachment);
     setSliderWithLabel(fmDepthSlider, fmDepthLabel, apvts, fmDepthId, fmDepthAttachment);
-
+    
+    
+    buttonAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(apvts, isOscActiveBtnId, isOscActiveBtn);
+    addAndMakeVisible(isOscActiveBtn);
 }
 
 OscComponent::~OscComponent()
@@ -63,7 +64,10 @@ void OscComponent::resized()
     const auto labelYOffset = 20;
     const auto labelHeight = 20;
     
+    
+    isOscActiveBtn.setBounds(10, 30, 30, 30);
     oscWaveSelector.setBounds (10, startY + 5, 90, 30);
+    
     //oscWaveSelector.setBounds (10, startY - labelYOffset, 90, labelHeight);
     
     gainSlider.setBounds (oscWaveSelector.getRight(), startY, sliderWidth, sliderHeight);

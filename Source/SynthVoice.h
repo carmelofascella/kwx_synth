@@ -52,6 +52,7 @@ public:
     void updateFilter(const int filterType, const float cutoff, const float resonance);
     
     void setConvolutionFlag(bool convolFlag);
+    void setOscillatorActivity(bool isActiveBtnOsc1, bool isActiveBtnOsc2);
     
     
     
@@ -74,6 +75,8 @@ private:
     bool isConvolutionActive = false;
     
     bool isPrepared {false};
+    bool isActiveBtnOsc1{true};
+    bool isActiveBtnOsc2{true};
     
 
 };

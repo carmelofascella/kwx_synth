@@ -55,6 +55,7 @@ public:
     
     void setConvolutionFlag(bool convolFlag);
     void setOscillatorActiveState(bool isActiveBtnOsc1, bool isActiveBtnOsc2);
+    void setMaster(float masterValue);
     
     
     
@@ -74,13 +75,11 @@ private:
     AdsrData filterAdsr;
     FilterData filter;
     juce::dsp::Convolution irLoader;
-    juce::dsp::Gain<float> gain;
+    juce::dsp::Gain<float> masterGain;
     
     bool isConvolutionActive = false;
     
     bool isPrepared {false};
-//    bool isActiveBtnOsc1{true};
-//    bool isActiveBtnOsc2{true};
     
     int isActiveBtnOsc1{1};
     int isActiveBtnOsc2{1};

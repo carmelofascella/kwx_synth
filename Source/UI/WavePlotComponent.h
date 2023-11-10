@@ -18,12 +18,19 @@
 class WavePlotComponent  : public juce::Component
 {
 public:
-    WavePlotComponent();
+    WavePlotComponent(juce::AudioProcessorValueTreeState& apvts, juce::String masterId);
     ~WavePlotComponent() override;
 
     void paint (juce::Graphics&) override;
     void resized() override;
 
 private:
+    
+    juce::Slider masterSlider;
+    juce::Label  masterLabel { "Master", "Master" };
+    
+    using SliderAttachment =juce::AudioProcessorValueTreeState::SliderAttachment;
+    std::unique_ptr<SliderAttachment> masterAttachment;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WavePlotComponent)
+
 };

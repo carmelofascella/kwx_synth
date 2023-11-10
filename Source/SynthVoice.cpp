@@ -68,9 +68,9 @@ void SynthVoice::prepareToPlay(double sampleRate, int samplesPerBlock, int outpu
     filter.prepareToPlay(sampleRate, samplesPerBlock, outputChannels);
     adsr1.setSampleRate(sampleRate);
     adsr2.setSampleRate(sampleRate);
-    gain.prepare(spec);
+    masterGain.prepare(spec);
     
-    gain.setGainLinear(0.3f);
+    //gain.setGainLinear(0.3f);
     
     irLoader.reset();
     irLoader.prepare(spec);
@@ -126,7 +126,8 @@ void SynthVoice::renderNextBlock (juce::AudioBuffer< float > &outputBuffer, int 
     filter.process (synthBuffer);
     filterAdsr.applyEnvelopeToBuffer (synthBuffer, 0, numSamples); //each voice has it s own mod filter. It processes each samples with the chosen envelope.
     
-    gain.process (juce::dsp::ProcessContextReplacing<float> (audioBlock));
+    //Master Gain
+    masterGain.process (juce::dsp::ProcessContextReplacing<float> (audioBlock));
     
     //Convolution with IR.
     if(irLoader.getCurrentIRSize() > 0 and isConvolutionActive)
@@ -161,4 +162,10 @@ void SynthVoice::setOscillatorActiveState(bool isActiveBtnOsc1, bool isActiveBtn
     this->isActiveBtnOsc1=(int)isActiveBtnOsc1;
     this->isActiveBtnOsc2=(int)isActiveBtnOsc2;
     numActiveOsc = this->isActiveBtnOsc1 + this->isActiveBtnOsc2;
+}
+
+void SynthVoice::setMaster(float masterValueDecibels)
+{
+    masterGain.setGainDecibels(masterValueDecibels);
+    //gain.setGainLinear(0.3f);
 }

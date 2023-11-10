@@ -12,9 +12,20 @@
 #include "WavePlotComponent.h"
 
 //==============================================================================
-WavePlotComponent::WavePlotComponent()
+WavePlotComponent::WavePlotComponent(juce::AudioProcessorValueTreeState& apvts, juce::String masterId)
 {
-
+    addAndMakeVisible(masterSlider);
+    addAndMakeVisible(masterLabel);
+    
+    
+    masterAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, masterId, masterSlider);
+    
+    masterSlider.setSliderStyle(juce::Slider::SliderStyle::LinearVertical);
+    masterSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, true, 50, 25);
+    
+    masterLabel.setColour (juce::Label::ColourIds::textColourId, juce::Colours::white);
+    masterLabel.setFont (15.0f);
+    masterLabel.setJustificationType (juce::Justification::centred);
 
 }
 
@@ -36,5 +47,9 @@ void WavePlotComponent::paint (juce::Graphics& g)
 
 void WavePlotComponent::resized()
 {
-
+    const int sliderWidth = 50;
+    const int sliderHeight = 120;
+    
+    masterSlider.setBounds(getWidth()-70, 60, sliderWidth, sliderHeight);
+    masterLabel.setBounds (masterSlider.getX(), 25, masterSlider.getWidth(), 50);
 }

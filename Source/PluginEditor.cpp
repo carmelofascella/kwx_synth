@@ -19,7 +19,9 @@ adsr("Amp Envelope 1", audioProcessor.apvts, "ATTACK", "DECAY", "SUSTAIN", "RELE
 adsr2("Amp Envelope 2", audioProcessor.apvts, "ATTACK2", "DECAY2", "SUSTAIN2", "RELEASE2"),
 filter(audioProcessor.apvts, "FILTERTYPE", "FILTERCUTOFF", "FILTERRES"),
 modAdsr("Mod Enveloper", audioProcessor.apvts, "MODATTACK", "MODDECAY", "MODSUSTAIN", "MODRELEASE"),
-effectsBox(audioProcessor.apvts, audioProcessor.variableTree, *audioProcessor.synthVoice, audioProcessor.savedFile, audioProcessor.root)
+effectsBox(audioProcessor.apvts, audioProcessor.variableTree, *audioProcessor.synthVoice, audioProcessor.savedFile, audioProcessor.root),
+waveBox(audioProcessor.apvts, "MASTER")
+
 
 {
     
@@ -31,7 +33,7 @@ effectsBox(audioProcessor.apvts, audioProcessor.variableTree, *audioProcessor.sy
     addAndMakeVisible(filter);
     addAndMakeVisible(modAdsr);
     addAndMakeVisible(effectsBox);
-    addAndMakeVisible(oscilloscope);
+    addAndMakeVisible(waveBox);
     addAndMakeVisible(audioProcessor.audioViewer);
     
     
@@ -81,9 +83,9 @@ void TapSynthAudioProcessorEditor::resized()
 
     effectsBox.setBounds(paddingX, paddingY4, modAdsr.getRight(), 100);
     
-    oscilloscope.setBounds(paddingX, paddingY5, modAdsr.getRight(), height);
+    waveBox.setBounds(paddingX, paddingY5, modAdsr.getRight(), height);
 
-    audioProcessor.audioViewer.setBounds(oscilloscope.getBoundsInParent().withSizeKeepingCentre(oscilloscope.getWidth()*0.9f, oscilloscope.getHeight()*0.65f));
+    audioProcessor.audioViewer.setBounds(waveBox.getBoundsInParent().withSizeKeepingCentre(waveBox.getWidth()*0.8f, waveBox.getHeight()*0.65f));
 
 }
 

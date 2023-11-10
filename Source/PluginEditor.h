@@ -46,7 +46,7 @@ private:
     
     FilterComponent filter;
     AdsrComponent modAdsr;
-    WavePlotComponent oscilloscope;
+    WavePlotComponent waveBox;
     EffectsComponent effectsBox;
     
     

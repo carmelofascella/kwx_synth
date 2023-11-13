@@ -226,6 +226,9 @@ void TapSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
             //Convolution Button
             auto& convFlag = *apvts.getRawParameterValue("CONVFLAG");
             
+            //Pan
+            auto& panValue = *apvts.getRawParameterValue("PAN");
+            
             //Master
             auto& master = *apvts.getRawParameterValue("MASTER");
         
@@ -233,8 +236,7 @@ void TapSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
             auto& osc1 = voice->getOscillator1();
             auto& osc2 = voice->getOscillator2();
             
-            auto& filterAdsr = voice->getFilterAdsr();
-            
+
             for (int i = 0; i < getTotalNumOutputChannels(); i++)
             {
                 osc1[i].selectWaveType(oscWaveChoice);
@@ -254,6 +256,8 @@ void TapSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
             voice->getFilterAdsr().update(modAttack.load(), modDecay.load(), modSustain.load(), modRelease.load());
             voice->updateFilter(filterType, cutoff, resonance);
             voice->setConvolutionFlag(convFlag.load());
+            
+            voice->setPan(panValue);
             
             voice->setMaster(master.load());
         
@@ -364,6 +368,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout TapSynthAudioProcessor::crea
     params.push_back (std::make_unique<juce::AudioParameterFloat>("FILTERCUTOFF", "Filter Cutoff", juce::NormalisableRange<float> { 20.0f, 20000.0f, 0.1f, 0.6f }, 200.0f));
     params.push_back (std::make_unique<juce::AudioParameterFloat>("FILTERRES", "Filter Resonance", juce::NormalisableRange<float> { 1.0f, 10.0f, 0.1f}, 1.0f));
     params.push_back (std::make_unique<juce::AudioParameterBool>("CONVFLAG", "Convolution Flag", false));
+    
+    params.push_back (std::make_unique<juce::AudioParameterFloat>("PAN", "Stereo Pan", juce::NormalisableRange<float> { -1.0f, 1.0f, 0.1f }, 0.0f));
     
     params.push_back (std::make_unique<juce::AudioParameterFloat>("MASTER", "Master Volume", juce::NormalisableRange<float> { -70.0f, 2.0f, 0.1f }, 0.0f, "dB"));
     

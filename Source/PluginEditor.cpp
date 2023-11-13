@@ -20,7 +20,7 @@ adsr2("Amp Envelope 2", audioProcessor.apvts, "ATTACK2", "DECAY2", "SUSTAIN2", "
 filter(audioProcessor.apvts, "FILTERTYPE", "FILTERCUTOFF", "FILTERRES"),
 modAdsr("Mod Enveloper", audioProcessor.apvts, "MODATTACK", "MODDECAY", "MODSUSTAIN", "MODRELEASE"),
 effectsBox(audioProcessor.apvts, audioProcessor.variableTree, *audioProcessor.synthVoice, audioProcessor.savedFile, audioProcessor.root),
-waveBox(audioProcessor.apvts, "MASTER")
+waveBox(audioProcessor.apvts, "MASTER", "PAN")
 
 
 {

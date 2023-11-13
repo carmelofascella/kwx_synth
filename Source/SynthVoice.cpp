@@ -71,6 +71,9 @@ void SynthVoice::prepareToPlay(double sampleRate, int samplesPerBlock, int outpu
     masterGain.prepare(spec);
     
     //gain.setGainLinear(0.3f);
+    panOsc.reset();
+    panOsc.prepare(spec);
+    panOsc.setPan(0.0f);
     
     irLoader.reset();
     irLoader.prepare(spec);
@@ -115,8 +118,12 @@ void SynthVoice::renderNextBlock (juce::AudioBuffer< float > &outputBuffer, int 
         }
     }
     
+
+    
     juce::dsp::AudioBlock<float> audioBlock { synthBuffer }; //Creates an AudioBlock that points to the data in an AudioBuffer.
     
+    //Panning
+    panOsc.process(juce::dsp::ProcessContextReplacing<float>(audioBlock));
     
     /**ADSR **/
     //adsr.applyEnvelopeToBuffer (synthBuffer, 0, synthBuffer.getNumSamples()); //audioBlock and outputBuffer are aliases, so the same thing (putting audio into one means putting stuff into the other)
@@ -134,6 +141,8 @@ void SynthVoice::renderNextBlock (juce::AudioBuffer< float > &outputBuffer, int 
     {
         irLoader.process(juce::dsp::ProcessContextReplacing<float>(audioBlock));
     }
+    
+
     
     for (int channel = 0; channel < outputBuffer.getNumChannels(); ++channel)
     {
@@ -168,4 +177,9 @@ void SynthVoice::setMaster(float masterValueDecibels)
 {
     masterGain.setGainDecibels(masterValueDecibels);
     //gain.setGainLinear(0.3f);
+}
+
+void SynthVoice::setPan(float panValue)
+{
+    panOsc.setPan(panValue);
 }

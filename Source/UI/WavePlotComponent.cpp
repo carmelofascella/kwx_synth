@@ -12,20 +12,28 @@
 #include "WavePlotComponent.h"
 
 //==============================================================================
-WavePlotComponent::WavePlotComponent(juce::AudioProcessorValueTreeState& apvts, juce::String masterId)
+WavePlotComponent::WavePlotComponent(juce::AudioProcessorValueTreeState& apvts, juce::String masterId, juce::String panId)
 {
     addAndMakeVisible(masterSlider);
     addAndMakeVisible(masterLabel);
     
+    addAndMakeVisible(panSlider);
+    addAndMakeVisible(panLabel);
     
     masterAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, masterId, masterSlider);
+    masterAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, panId, panSlider);
     
     masterSlider.setSliderStyle(juce::Slider::SliderStyle::LinearVertical);
     masterSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, true, 50, 25);
-    
     masterLabel.setColour (juce::Label::ColourIds::textColourId, juce::Colours::white);
     masterLabel.setFont (15.0f);
     masterLabel.setJustificationType (juce::Justification::centred);
+    
+    panSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
+    panSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, true, 50, 25);
+    panLabel.setColour (juce::Label::ColourIds::textColourId, juce::Colours::white);
+    panLabel.setFont (15.0f);
+    panLabel.setJustificationType (juce::Justification::centred);
 
 }
 
@@ -49,7 +57,11 @@ void WavePlotComponent::resized()
 {
     const int sliderWidth = 50;
     const int sliderHeight = 120;
+    const int panSize = 80;
     
     masterSlider.setBounds(getWidth()-70, 60, sliderWidth, sliderHeight);
     masterLabel.setBounds (masterSlider.getX(), 25, masterSlider.getWidth(), 50);
+    
+    panSlider.setBounds(5, 60, panSize, panSize);
+    panLabel.setBounds (panSlider.getX(), 25, panSlider.getWidth(), 50);
 }

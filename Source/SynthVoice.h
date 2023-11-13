@@ -55,6 +55,7 @@ public:
     
     void setConvolutionFlag(bool convolFlag);
     void setOscillatorActiveState(bool isActiveBtnOsc1, bool isActiveBtnOsc2);
+    void setPan(float panValue);
     void setMaster(float masterValue);
     
     
@@ -74,6 +75,10 @@ private:
     
     AdsrData filterAdsr;
     FilterData filter;
+    
+    juce::dsp::Panner<float> panOsc;
+
+    
     juce::dsp::Convolution irLoader;
     juce::dsp::Gain<float> masterGain;
     

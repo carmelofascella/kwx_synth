@@ -12,7 +12,7 @@
 #include "EffectsComponent.h"
 
 //==============================================================================
-EffectsComponent::EffectsComponent(juce::AudioProcessorValueTreeState& apvts, juce::ValueTree& variableTree, SynthVoice& synthVoice, juce::File& savedFile, juce::File& root)
+EffectsComponent::EffectsComponent(juce::AudioProcessorValueTreeState& apvts, juce::ValueTree& variableTree, std::vector<SynthVoice*>& synthVoiceVector, juce::File& savedFile, juce::File& root)
 {
     addAndMakeVisible(loadBtn);
     addAndMakeVisible(irName);
@@ -21,7 +21,7 @@ EffectsComponent::EffectsComponent(juce::AudioProcessorValueTreeState& apvts, ju
     buttonAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(apvts, "CONVFLAG", convolBtn);
     
     loadBtn.setButtonText("Load Impulse Response");
-    loadBtn.onClick = [this, &variableTree, &synthVoice, &savedFile, &root]()
+    loadBtn.onClick = [this, &variableTree, &synthVoiceVector, &savedFile, &root]()
     {
         fileChooser = std::make_unique<juce::FileChooser>("Choose File",
                                                           root,
@@ -29,7 +29,7 @@ EffectsComponent::EffectsComponent(juce::AudioProcessorValueTreeState& apvts, ju
         const auto fileChooserFlags = juce::FileBrowserComponent::openMode |
         juce::FileBrowserComponent::canSelectFiles | juce::FileBrowserComponent::canSelectDirectories;
         
-        fileChooser->launchAsync(fileChooserFlags, [this, &variableTree, &synthVoice, &savedFile, &root](const juce::FileChooser& chooser)
+        fileChooser->launchAsync(fileChooserFlags, [this, &variableTree, &savedFile, &root, &synthVoiceVector](const juce::FileChooser& chooser)
                                  {
                                      juce::File result (chooser.getResult());
                                      
@@ -39,7 +39,10 @@ EffectsComponent::EffectsComponent(juce::AudioProcessorValueTreeState& apvts, ju
                                          variableTree.setProperty("file1", savedFile.getFullPathName(), nullptr);
                                          variableTree.setProperty("root", savedFile.getParentDirectory().getFullPathName(), nullptr);
                                          root = savedFile.getParentDirectory().getFullPathName();
-                                         synthVoice.getIrLoader().loadImpulseResponse(savedFile, juce::dsp::Convolution::Stereo::yes, juce::dsp::Convolution::Trim::yes, 0);
+                                         for (auto synthVoice : synthVoiceVector){
+                                             synthVoice->getIrLoader().loadImpulseResponse(savedFile, juce::dsp::Convolution::Stereo::yes, juce::dsp::Convolution::Trim::yes, 0);
+                                         }
+
                                          irName.setText(result.getFileName(), juce::dontSendNotification);
                                          
                                          if(!convolBtn.getToggleState())

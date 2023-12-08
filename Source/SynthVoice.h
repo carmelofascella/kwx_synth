@@ -78,7 +78,6 @@ private:
     
     juce::dsp::Panner<float> panOsc;
 
-    
     juce::dsp::Convolution irLoader;
     juce::dsp::Gain<float> masterGain;
     

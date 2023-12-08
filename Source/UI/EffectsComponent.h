@@ -19,7 +19,7 @@
 class EffectsComponent  : public juce::Component
 {
 public:
-    EffectsComponent(juce::AudioProcessorValueTreeState& apvts, juce::ValueTree& variableTree, SynthVoice& synthVoice, juce::File& savedFile, juce::File& root);
+    EffectsComponent(juce::AudioProcessorValueTreeState& apvts, juce::ValueTree& variableTree, std::vector<SynthVoice*>& synthVoiceVector, juce::File& savedFile, juce::File& root);
     ~EffectsComponent() override;
 
     void paint (juce::Graphics&) override;

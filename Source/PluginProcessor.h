@@ -65,17 +65,17 @@ public:
     
     juce::AudioVisualiserComponent audioViewer;
     
-    juce::dsp::Convolution irLoader;
-    
     SynthSound* synthSound;
-    SynthVoice* synthVoice;
-
+    //SynthVoice* synthVoice;
+    std::vector<SynthVoice*> synthVoiceVector;
+    
     juce::File root, savedFile;
 
 private:
     
     juce::Synthesiser synth;
     juce::AudioProcessorValueTreeState::ParameterLayout createParams();
+    int NUM_VOICES = 8;
     
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TapSynthAudioProcessor)

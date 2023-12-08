@@ -25,11 +25,18 @@ audioViewer(1)
 
 #endif
 {
-    synthSound = new SynthSound();
-    synthVoice = new SynthVoice();
+
     
+    //Add voices
+    for (int i=0; i<NUM_VOICES; i++){
+        SynthVoice* synthVoice = new SynthVoice();
+        synthVoiceVector.push_back(synthVoice);
+        synth.addVoice(synthVoice);
+    }
+
+    //Add sound
+    synthSound = new SynthSound();
     synth.addSound(synthSound);
-    synth.addVoice(synthVoice);
     
     //Audio viewer settings
     audioViewer.setBufferSize(1024);
@@ -306,7 +313,8 @@ void TapSynthAudioProcessor::setStateInformation (const void* data, int sizeInBy
         savedFile = juce::File(variableTree.getProperty("file1"));
         root = juce::File(variableTree.getProperty("root"));
 
-        synthVoice->getIrLoader().loadImpulseResponse(savedFile, juce::dsp::Convolution::Stereo::yes, juce::dsp::Convolution::Trim::yes, 0);
+//        synthVoice->getIrLoader().loadImpulseResponse(savedFile, juce::dsp::Convolution::Stereo::yes, juce::dsp::Convolution::Trim::yes, 0);
+
     }
 
 }
